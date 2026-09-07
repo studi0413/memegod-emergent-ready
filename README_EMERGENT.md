@@ -14,13 +14,15 @@ This is the existing MemeGod website. Preserve the current visual identity and a
 - `assets/money.webp` — money scene
 - `assets/meme-god-theme.mp3` — MemeGod theme music
 
-## Values still waiting for final launch information
-In `index.html`, update the `SITE` object when final values are available:
-- `contract`: `PASTE_CONTRACT_ADDRESS`
-- `pumpfun`: `PASTE_PUMPFUN_URL`
+## Launch information
+The `SITE` object in `index.html` currently contains:
+- `contract`: `9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump`
+- `pumpfun`: `https://pump.fun/coin/9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump`
+- `x`: `https://x.com/memegodcoinz`
+- `ticker`: `$MEMEGOD`
+
+Still waiting for final launch information:
 - `telegram`: `PASTE_TELEGRAM_URL`
-- `x`: already set to `https://x.com/studi0413`
-- `ticker`: currently `$MEMEGOD`
 
 ## First Emergent instruction
 Use the prompt below after pulling this repository into Emergent:
