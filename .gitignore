@@ -4,3 +4,4 @@ Thumbs.db
 .env
 telegram-bot/.env
 telegram-bot/*.pid
+telegram-bot/.market-state.json

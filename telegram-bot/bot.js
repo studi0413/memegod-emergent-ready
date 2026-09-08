@@ -1,6 +1,10 @@
+const fs = require('node:fs');
+const path = require('node:path');
+
+const MARKET_TEST = process.argv.includes('--market-test');
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-if (!TOKEN) {
+if (!TOKEN && !MARKET_TEST) {
   console.error('Missing TELEGRAM_BOT_TOKEN.');
   process.exit(1);
 }
@@ -10,6 +14,13 @@ const CA = '9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump';
 const BUY = `https://pump.fun/coin/${CA}`;
 const SITE = 'https://studi0413.github.io/memegod-emergent-ready/';
 const X = 'https://x.com/memegodcoinz';
+const COMMUNITY_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '-1004303584990';
+const MARKET_API = `https://api.dexscreener.com/token-pairs/v1/solana/${CA}`;
+const MARKET_STATE_PATH = process.env.MARKET_STATE_PATH || path.join(__dirname, '.market-state.json');
+const MARKET_CHECK_INTERVAL_MS = Number(process.env.MARKET_CHECK_INTERVAL_MS) || 5 * 60 * 1000;
+const MARKET_SUMMARY_INTERVAL_MS = Number(process.env.MARKET_SUMMARY_INTERVAL_MS) || 4 * 60 * 60 * 1000;
+const MARKET_CAP_MILESTONES = [5_000, 10_000, 25_000, 50_000, 100_000, 250_000, 500_000, 1_000_000, 2_500_000, 5_000_000, 10_000_000];
+const VOLUME_MILESTONES = [10_000, 25_000, 50_000, 100_000, 250_000, 500_000, 1_000_000];
 const CAPTCHA_TTL_MS = 2 * 60 * 1000;
 const TEMP_BAN_SECONDS = 24 * 60 * 60;
 const challenges = new Map();
@@ -25,10 +36,167 @@ const HELP = [
   '/buy — official Pump.fun link',
   '/website — official website',
   '/x — official X account',
+  '/stats — latest market snapshot',
   '/help — show this menu',
   '',
   '⚠️ Admins will never ask for your seed phrase or private keys.',
 ].join('\n');
+
+function asNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function formatUsd(value, price = false) {
+  const number = asNumber(value);
+  if (price && number > 0 && number < 0.01) {
+    return `$${number.toLocaleString('en-US', { maximumFractionDigits: 10 })}`;
+  }
+  return `$${number.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+}
+
+function formatPercent(value) {
+  const number = asNumber(value);
+  return `${number >= 0 ? '+' : ''}${number.toFixed(2)}%`;
+}
+
+async function fetchMarket() {
+  const response = await fetch(MARKET_API, {
+    headers: { accept: 'application/json', 'user-agent': 'MemeGodCommunityBot/1.0' },
+  });
+  if (!response.ok) throw new Error(`Market API returned ${response.status}`);
+
+  const pairs = await response.json();
+  if (!Array.isArray(pairs) || pairs.length === 0) {
+    throw new Error('No MemeGod market pair is indexed yet.');
+  }
+
+  const graduatedPair = pairs.find((pair) => pair.dexId === 'pumpswap');
+  const pair = graduatedPair || [...pairs].sort((left, right) => {
+    const leftActivity = asNumber(left.volume?.h24) + asNumber(left.liquidity?.usd);
+    const rightActivity = asNumber(right.volume?.h24) + asNumber(right.liquidity?.usd);
+    return rightActivity - leftActivity;
+  })[0];
+
+  return {
+    buys24h: asNumber(pair.txns?.h24?.buys),
+    chartUrl: pair.url || BUY,
+    dexId: pair.dexId || 'pumpfun',
+    graduated: Boolean(graduatedPair),
+    liquidityUsd: asNumber(pair.liquidity?.usd),
+    marketCap: asNumber(pair.marketCap || pair.fdv),
+    priceChange24h: asNumber(pair.priceChange?.h24),
+    priceUsd: asNumber(pair.priceUsd),
+    sells24h: asNumber(pair.txns?.h24?.sells),
+    volume24h: asNumber(pair.volume?.h24),
+  };
+}
+
+function marketSummary(market, heading = '👑 MemeGod 4-hour market update') {
+  const status = market.graduated ? 'Graduated to PumpSwap ✅' : 'Trading on the Pump.fun bonding curve';
+  const lines = [
+    heading,
+    '',
+    `Price: ${formatUsd(market.priceUsd, true)}`,
+    `Market cap: ${formatUsd(market.marketCap)}`,
+    `24h volume: ${formatUsd(market.volume24h)}`,
+    `24h change: ${formatPercent(market.priceChange24h)}`,
+    `24h trades: ${market.buys24h} buys / ${market.sells24h} sells`,
+  ];
+  if (market.liquidityUsd > 0) lines.push(`Liquidity: ${formatUsd(market.liquidityUsd)}`);
+  lines.push(`Status: ${status}`, '', `Chart: ${market.chartUrl}`, '', 'Market data via DEX Screener. Informational only.');
+  return lines.join('\n');
+}
+
+function loadMarketState() {
+  try {
+    return JSON.parse(fs.readFileSync(MARKET_STATE_PATH, 'utf8'));
+  } catch (error) {
+    if (error.code !== 'ENOENT') console.error('Market state read failed:', error.message);
+    return null;
+  }
+}
+
+function saveMarketState(state) {
+  fs.writeFileSync(MARKET_STATE_PATH, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
+}
+
+function reachedMilestones(value, thresholds) {
+  return thresholds.filter((threshold) => value >= threshold);
+}
+
+async function checkMarket() {
+  const market = await fetchMarket();
+  let state = loadMarketState();
+
+  if (!state) {
+    state = {
+      graduated: market.graduated,
+      marketCapMilestones: reachedMilestones(market.marketCap, MARKET_CAP_MILESTONES),
+      volumeMilestones: reachedMilestones(market.volume24h, VOLUME_MILESTONES),
+      lastSummaryAt: Date.now(),
+    };
+    saveMarketState(state);
+    console.log('Market tracker baseline created; prior milestones will not be announced.');
+    return;
+  }
+
+  const newMarketCaps = reachedMilestones(market.marketCap, MARKET_CAP_MILESTONES)
+    .filter((value) => !state.marketCapMilestones.includes(value));
+  const newVolumes = reachedMilestones(market.volume24h, VOLUME_MILESTONES)
+    .filter((value) => !state.volumeMilestones.includes(value));
+
+  if (newMarketCaps.length > 0) {
+    const milestone = Math.max(...newMarketCaps);
+    await telegram('sendMessage', {
+      chat_id: COMMUNITY_CHAT_ID,
+      text: marketSummary(market, `🚀 MemeGod milestone unlocked: ${formatUsd(milestone)} market cap!`),
+      disable_web_page_preview: true,
+    });
+    state.marketCapMilestones.push(...newMarketCaps);
+  }
+
+  if (newVolumes.length > 0) {
+    const milestone = Math.max(...newVolumes);
+    await telegram('sendMessage', {
+      chat_id: COMMUNITY_CHAT_ID,
+      text: marketSummary(market, `🔥 MemeGod crossed ${formatUsd(milestone)} in 24-hour volume!`),
+      disable_web_page_preview: true,
+    });
+    state.volumeMilestones.push(...newVolumes);
+  }
+
+  if (market.graduated && !state.graduated) {
+    await telegram('sendMessage', {
+      chat_id: COMMUNITY_CHAT_ID,
+      text: marketSummary(market, '🎓 MemeGod has graduated to PumpSwap! 👑'),
+      disable_web_page_preview: true,
+    });
+    state.graduated = true;
+  }
+
+  if (Date.now() - asNumber(state.lastSummaryAt) >= MARKET_SUMMARY_INTERVAL_MS) {
+    await telegram('sendMessage', {
+      chat_id: COMMUNITY_CHAT_ID,
+      text: marketSummary(market),
+      disable_web_page_preview: true,
+    });
+    state.lastSummaryAt = Date.now();
+  }
+
+  saveMarketState(state);
+}
+
+async function marketLoop() {
+  while (true) {
+    try {
+      await checkMarket();
+    } catch (error) {
+      console.error('Market update failed:', error.message);
+    }
+    await new Promise((resolve) => setTimeout(resolve, MARKET_CHECK_INTERVAL_MS));
+  }
+}
 
 async function telegram(method, body) {
   const response = await fetch(`${API}/${method}`, {
@@ -247,6 +415,15 @@ async function handle(update) {
 
   if (await moderateSpam(message)) return;
   if (!message.text || message.from?.is_bot) return;
+  if (/^\/stats(@\w+)?\b/i.test(message.text.trim())) {
+    try {
+      await reply(message, marketSummary(await fetchMarket(), '👑 MemeGod market snapshot'));
+    } catch (error) {
+      console.error('Market snapshot failed:', error.message);
+      await reply(message, 'Market data is temporarily unavailable. Please try again shortly.');
+    }
+    return;
+  }
   const response = responseFor(message.text);
   if (response) await reply(message, response);
 }
@@ -254,6 +431,7 @@ async function handle(update) {
 async function run() {
   let offset = 0;
   console.log('MemeGod bot is running.');
+  void marketLoop();
   while (true) {
     try {
       const updates = await telegram('getUpdates', {
@@ -276,4 +454,13 @@ async function run() {
   }
 }
 
-run();
+if (MARKET_TEST) {
+  fetchMarket()
+    .then((market) => console.log(marketSummary(market, 'MemeGod market feed test')))
+    .catch((error) => {
+      console.error(error.message);
+      process.exitCode = 1;
+    });
+} else {
+  run();
+}
