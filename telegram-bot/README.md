@@ -1,7 +1,13 @@
 # MemeGod Community Bot
 
 The bot answers common questions about the official contract address, buying,
-the website, and the X account. It also welcomes new members.
+the website, and the X account. It also welcomes new members, runs a private
+two-minute CAPTCHA for join requests, and applies conservative 24-hour bans to
+strong solicitation or link-spam matches.
+
+For CAPTCHA approvals, grant the bot only the **Invite Users** administrator
+right. To enforce spam removal and temporary bans, also grant **Delete Messages**
+and **Ban Users**. Do not grant Add Admins or Change Group Info.
 
 ## Run
 
