@@ -16,13 +16,10 @@ This is the existing MemeGod website. Preserve the current visual identity and a
 
 ## Launch information
 The `SITE` object in `index.html` currently contains:
-- `contract`: `9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump`
-- `pumpfun`: `https://pump.fun/coin/9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump`
+- `contract`: `PENDING`
+- `pumpfun`: pending until the new contract is supplied
 - `x`: `https://x.com/memegodcoinz`
 - `ticker`: `$MEMEGOD`
-
-Still waiting for final launch information:
-- `telegram`: `PASTE_TELEGRAM_URL`
 
 ## First Emergent instruction
 Use the prompt below after pulling this repository into Emergent:
@@ -51,7 +48,7 @@ HERO:
 - Headline should emphasize: “MEMEGOD” and “THE GOD OF MEME COINS”.
 - Keep the copy direct and human, not corporate or AI-sounding.
 - Primary CTA: Buy on Pump.fun.
-- Secondary CTAs: Telegram and X.
+- Secondary CTA: X.
 - Show the contract address with a one-click Copy button once supplied.
 
 ART / CONTENT:
@@ -69,7 +66,7 @@ MUSIC:
 FUNCTIONAL REQUIREMENTS:
 - Preserve all existing external-link behavior.
 - Preserve contract copy functionality.
-- Keep placeholders for Pump.fun URL, Telegram URL, contract address, and ticker until I provide the final values.
+- Keep placeholders for the Pump.fun URL, contract address, and ticker until I provide the final values.
 - Do not invent a contract address, token price, market cap, holder count, liquidity, audit status, locked-liquidity claim, or any other financial/statistical claim.
 - Do not add fake live data.
 - Make all buttons keyboard accessible and mobile friendly.

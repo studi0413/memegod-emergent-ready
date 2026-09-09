@@ -32,7 +32,7 @@
     .bars{display:flex;gap:2px;height:13px;align-items:end}.bars i{width:2px;height:5px;border-radius:2px;background:var(--blue)}.music-toggle.playing .bars i:nth-child(1){animation:eq .72s infinite ease-in-out}.music-toggle.playing .bars i:nth-child(2){animation:eq .55s .1s infinite ease-in-out}.music-toggle.playing .bars i:nth-child(3){animation:eq .8s .2s infinite ease-in-out}.music-toggle.playing .bars i:nth-child(4){animation:eq .62s .3s infinite ease-in-out}@keyframes eq{50%{height:13px}}
 
     .hero{position:relative;padding-top:76px;overflow:hidden;background:#020407}
-    .hero-visual{height:calc(100svh - 76px);min-height:520px;display:grid;place-items:center;background:#020407}
+    .hero-visual{width:100%;aspect-ratio:3/1;display:grid;place-items:center;background:#020407}
     .hero-poster{width:100%;height:100%;object-fit:contain;object-position:center}
     .hero-controls{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:24px;padding-bottom:52px}
     .hero-controls .actions{margin-top:0;flex:0 0 auto}
@@ -41,7 +41,7 @@
     h1{font-size:clamp(74px,10vw,156px);line-height:.80;letter-spacing:-.075em;margin:24px 0 22px;font-weight:1000;background:linear-gradient(180deg,#fff8d0 0,#ffd45c 40%,#ff8b00 76%,#d95b00 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 12px 38px rgba(255,132,0,.16))}
     .hero-copy{max-width:630px;margin:0;color:#d5dce5;font-size:clamp(18px,1.8vw,24px);line-height:1.5}.hero-copy b{color:white}
     .actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:28px}.btn{min-height:52px;padding:0 20px;border-radius:14px;border:1px solid var(--line);font-weight:950;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.2s transform,.2s background,.2s border-color}.btn:hover{transform:translateY(-2px)}.btn.primary{background:linear-gradient(135deg,#ffe36f,#ff8d00);color:#160f02;border-color:transparent;box-shadow:0 16px 44px rgba(255,137,0,.22)}.btn.secondary{background:rgba(7,10,15,.72);backdrop-filter:blur(12px)}.btn.secondary:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.22)}
-    .ca{margin-top:18px;max-width:620px;border:1px solid var(--line);border-radius:13px;padding:9px 9px 9px 14px;background:rgba(4,7,11,.68);backdrop-filter:blur(12px);display:flex;align-items:center;gap:10px}.ca-main{min-width:0;flex:1}.ca-label{font-size:9px;color:#77818e;font-weight:1000;letter-spacing:.14em}.ca-value{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#d8dee8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.copy{border:0;border-radius:9px;padding:8px 11px;background:#fff;color:#07090d;font-weight:950;cursor:pointer}
+    .ca{margin-top:18px;max-width:620px;border:1px solid var(--line);border-radius:13px;padding:9px 9px 9px 14px;background:rgba(4,7,11,.68);backdrop-filter:blur(12px);display:flex;align-items:center;gap:10px}.ca-main{min-width:0;flex:1}.ca-label{font-size:9px;color:#77818e;font-weight:1000;letter-spacing:.14em}.ca-value{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#d8dee8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.copy{border:0;border-radius:9px;padding:8px 11px;background:#fff;color:#07090d;font-weight:950;cursor:pointer}.copy:disabled{cursor:default;opacity:.68}
     .scroll-cue{position:absolute;z-index:3;left:50%;bottom:16px;transform:translateX(-50%);font-size:10px;letter-spacing:.2em;color:#718091;font-weight:900;text-transform:uppercase;white-space:nowrap}
 
     section{padding:104px 0;position:relative}.kicker{font-size:11px;letter-spacing:.18em;font-weight:1000;color:#ffc44a;text-transform:uppercase}.title{font-size:clamp(44px,6.4vw,86px);line-height:.92;letter-spacing:-.06em;margin:11px 0 18px}.lead{color:var(--muted);font-size:18px;line-height:1.72;max-width:760px}
@@ -62,7 +62,7 @@
 
     .reveal{opacity:0;transform:translateY(24px);transition:.8s opacity,.8s transform}.reveal.show{opacity:1;transform:none}
     @media(max-width:940px){
-      .nav-links{display:none}.hero-visual{height:auto;min-height:0}.hero-poster{height:auto}.hero-controls{flex-direction:column;align-items:stretch}.hero-controls .ca{min-width:0;max-width:none}
+      .nav-links{display:none}.hero-controls{flex-direction:column;align-items:stretch}.hero-controls .ca{min-width:0;max-width:none}
       .origin-grid,.throne-grid{grid-template-columns:1fr}.origin-art{order:2}.throne-art{min-height:520px;order:-1}.gallery{grid-template-columns:1fr}.shot,.shot:nth-child(n){grid-column:auto;min-height:420px}.steps{grid-template-columns:1fr}.footer-row{flex-direction:column}
     }
     @media(max-width:620px){
@@ -79,21 +79,20 @@
       <div class="nav-links"><a href="#legend">Legend</a><a href="#throne">The Throne</a><a href="#cinema">Scenes</a><a href="#buy">Buy</a></div>
       <div class="nav-right">
         <button class="music-toggle" id="musicToggle" type="button" aria-label="Toggle MemeGod theme music"><span class="bars"><i></i><i></i><i></i><i></i></span><span class="music-label" id="musicLabel">MemeGod Theme</span></button>
-        <a class="buy-pill js-pump" href="#buy">BUY MEMEGOD</a>
+        <a class="buy-pill js-pump" href="#buy">LAUNCH PENDING</a>
       </div>
     </div>
   </nav>
 
   <main id="top">
     <section class="hero">
-      <div class="hero-visual"><img class="hero-poster" src="assets/launch-hero.png" alt="MemeGod now live on Pump.fun"></div>
+      <div class="hero-visual"><img class="hero-poster" src="assets/launch-hero.png" alt="MemeGod — the god of meme coins"></div>
       <div class="wrap hero-controls">
         <div class="actions">
-          <a class="btn primary js-pump" href="#buy">⚡ Buy on Pump.fun</a>
+          <a class="btn primary js-pump" href="#buy">⚡ Launch Pending</a>
           <a class="btn secondary js-x" href="#">𝕏 Follow on X</a>
-          <a class="btn secondary js-telegram" href="#">✈ Telegram</a>
         </div>
-        <div class="ca"><div class="ca-main"><div class="ca-label">CONTRACT ADDRESS</div><div id="ca" class="ca-value">9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump</div></div><button class="copy" id="copyCa">COPY</button></div>
+        <div class="ca"><div class="ca-main"><div class="ca-label">CONTRACT ADDRESS</div><div id="ca" class="ca-value">PENDING</div></div><button class="copy" id="copyCa" disabled>PENDING</button></div>
       </div>
       <div class="scroll-cue">Scroll to enter the kingdom ↓</div>
     </section>
@@ -160,7 +159,7 @@
           <div class="kicker">THE THRONE IS OPEN</div>
           <h2>There are meme coins.<br>Then there’s MemeGod.</h2>
           <p>The final boss is here. Everything after this is just trying to catch up.</p>
-          <div class="actions"><a class="btn primary js-pump" href="#buy">⚡ Enter Pump.fun</a><a class="btn secondary js-telegram" href="#">Join Telegram</a><a class="btn secondary js-x" href="#">Follow on X</a></div>
+          <div class="actions"><a class="btn primary js-pump" href="#buy">⚡ Launch Pending</a><a class="btn secondary js-x" href="#">Follow on X</a></div>
         </div>
       </div>
     </section>
@@ -169,19 +168,18 @@
   <footer>
     <div class="wrap footer-row">
       <div class="fine"><strong style="color:#fff">MEMEGOD</strong><br>This site is entertainment and community content, not financial advice. Meme coins and crypto are highly risky. Always verify official links and the contract address before interacting with any token.</div>
-      <div class="social"><a class="js-x" href="#">X</a><a class="js-telegram" href="#">Telegram</a><a class="js-pump" href="#buy">Pump.fun</a></div>
+      <div class="social"><a class="js-x" href="#">X</a><a class="js-pump" href="#buy">Launch Pending</a></div>
     </div>
   </footer>
 
   <script>
     // =========================
-    // EDIT THESE 5 VALUES ONLY
+    // EDIT THESE 4 VALUES ONLY
     // =========================
     const SITE = {
-      contract: '9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump',
-      pumpfun: 'https://pump.fun/coin/9Jx9ULUf9bvshu2grDaxYwYRqKarP4awF9N2iAyepump',
+      contract: 'PENDING',
+      pumpfun: '',
       x: 'https://x.com/memegodcoinz',
-      telegram: 'https://t.me/+lagmm-XhbT9mZDc5',
       ticker: '$MEMEGOD'
     };
 
@@ -189,11 +187,10 @@
     document.getElementById('ca').textContent = SITE.contract;
     document.querySelectorAll('.js-pump').forEach(a=>{if(validUrl(SITE.pumpfun)){a.href=SITE.pumpfun;a.target='_blank';a.rel='noopener'}});
     document.querySelectorAll('.js-x').forEach(a=>{if(validUrl(SITE.x)){a.href=SITE.x;a.target='_blank';a.rel='noopener'}});
-    document.querySelectorAll('.js-telegram').forEach(a=>{if(validUrl(SITE.telegram)){a.href=SITE.telegram;a.target='_blank';a.rel='noopener'}});
 
     const copyBtn=document.getElementById('copyCa');
     copyBtn.addEventListener('click',async()=>{
-      if(SITE.contract.includes('PASTE_')){copyBtn.textContent='ADD CA FIRST';setTimeout(()=>copyBtn.textContent='COPY',1400);return}
+      if(SITE.contract==='PENDING' || SITE.contract.includes('PASTE_')){copyBtn.textContent='PENDING';return}
       try{await navigator.clipboard.writeText(SITE.contract);copyBtn.textContent='COPIED ✓';setTimeout(()=>copyBtn.textContent='COPY',1400)}catch(e){}
     });
 
