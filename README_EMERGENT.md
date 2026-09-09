@@ -16,8 +16,8 @@ This is the existing MemeGod website. Preserve the current visual identity and a
 
 ## Launch information
 The `SITE` object in `index.html` currently contains:
-- `contract`: `PENDING`
-- `pumpfun`: pending until the new contract is supplied
+- `contract`: `9rqq4ZxUu1MUK5DXZqtaNzTzobHZTAn4VEcEKSf4pump`
+- `pumpfun`: `https://pump.fun/coin/9rqq4ZxUu1MUK5DXZqtaNzTzobHZTAn4VEcEKSf4pump`
 - `x`: `https://x.com/memegodcoinz`
 - `ticker`: `$MEMEGOD`
 
